@@ -6,3 +6,6 @@ __pycache__
 __pychache__
 data
 uv.lock
+
+.idea
+.DS_Store
