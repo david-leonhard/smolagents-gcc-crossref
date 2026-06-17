@@ -20,6 +20,7 @@ from tools import (
     get_cluster_coordinates,
     get_cluster_in_range,
     get_mass_unit,
+    get_matching_cluster_names,
 )
 
 # Load environment variables from .env file
@@ -74,13 +75,21 @@ def on_plan_created(memory_step, agent):
             print("Please enter Y or N.")
 
 
-TOOLS = [check_data, get_catalog_column_names, get_mass_unit, get_cluster_coordinates, get_cluster_in_range]
+TOOLS = [
+    check_data,
+    get_catalog_column_names,
+    get_mass_unit,
+    get_cluster_coordinates,
+    get_cluster_in_range,
+    get_matching_cluster_names,
+]
 
 AUTHORIZED_IMPORTS = [
     "astropy",
     "numpy",
     "datetime",
     "pathlib",
+    "matplotlib",
 ]
 
 
@@ -108,9 +117,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "prompt",
         nargs="?",
-        default="Given this cluster name: 1eRASS J000005.2-383729. "
-        "Find out if there is a matching cluster in the other catalog and, if so, "
-        "report the similarity of their masses",
+        default="Give me 5 names from clusters in one catalog that appear also in the second catalog together with "
+        "masses. Use a tolerance of 1 arcmin.",
         help="The task for the agent to perform.",
     )
     parser.add_argument(

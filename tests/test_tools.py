@@ -4,12 +4,19 @@ from tools import (
     get_cluster_coordinates,
     get_cluster_in_range,
     get_mass_unit,
+    get_matching_cluster_names,
 )
 
 
 def test_check_data() -> None:
-    eRASS1_out_path = "./data/erass1cl_primary_v3.2.fits"
-    PR4_out_path = "./data/HFI_PCCS_SZ-union_R2.08.fits"
+    import os
+
+    eRASS1_out_path = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)), "data", "erass1cl_primary_v3.2.fits"  # type: ignore
+    )
+    PR4_out_path = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)), "data", "HFI_PCCS_SZ-union_R2.08.fits"  # type: ignore
+    )
 
     assert (eRASS1_out_path, PR4_out_path) == check_data()
 
@@ -168,4 +175,38 @@ def test_get_cluster_in_range() -> None:
     eRASS1_out_path, PR4_out_path = check_data()
     ra = 0.021729666982255817
     dec = -38.6249030550687
-    print(get_cluster_in_range(catalog_path=eRASS1_out_path, ra=ra, dec=dec))
+    assert get_cluster_in_range(catalog_path=eRASS1_out_path, ra=ra, dec=dec)
+    assert not get_cluster_in_range(catalog_path=PR4_out_path, ra=ra, dec=dec)
+
+
+def test_get_matching_cluster_names() -> None:
+    eRASS1_out_path, PR4_out_path = check_data()
+    assert (
+        len(get_matching_cluster_names(catalog_path=eRASS1_out_path, comparison_catalog_path=PR4_out_path, tolerance=1))
+        == 203
+    )
+    assert (
+        len(get_matching_cluster_names(catalog_path=eRASS1_out_path, comparison_catalog_path=PR4_out_path, tolerance=2))
+        == 439
+    )
+    assert (
+        len(get_matching_cluster_names(catalog_path=PR4_out_path, comparison_catalog_path=eRASS1_out_path, tolerance=1))
+        == 203
+    )
+    assert (
+        len(get_matching_cluster_names(catalog_path=PR4_out_path, comparison_catalog_path=eRASS1_out_path, tolerance=2))
+        == 437
+    )
+
+    assert (
+        "1eRASS J235726.2-793935"
+        in get_matching_cluster_names(catalog_path=eRASS1_out_path, comparison_catalog_path=PR4_out_path, tolerance=1)[
+            -1
+        ]
+    )
+    assert (
+        "PSZ2 G358.98-67.26"
+        in get_matching_cluster_names(catalog_path=PR4_out_path, comparison_catalog_path=eRASS1_out_path, tolerance=1)[
+            -1
+        ]
+    )
