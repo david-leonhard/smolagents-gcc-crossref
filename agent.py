@@ -118,7 +118,8 @@ if __name__ == "__main__":
         "prompt",
         nargs="?",
         default="Give me 5 names from clusters in one catalog that appear also in the second catalog together with "
-        "masses. Use a tolerance of 1 arcmin.",
+        "masses. Use a tolerance of 1 arcmin. Submodules are not allowed to be directly imported so you need to "
+        "address them via the core module, e.g. import astropy and use astropy.io.fits explicitly.",
         help="The task for the agent to perform.",
     )
     parser.add_argument(
